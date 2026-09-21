@@ -1,19 +1,20 @@
 import os
 from dotenv import load_dotenv
 load_dotenv()
-import pandas as pd      #for handling table
-from sqlalchemy import create_engine      #read data from PostgreSQL
-from pyod.models.iforest import IForest      #Pyod algorithm used-Isolation Forest model
 
-#connecting to PostgreSQL
+import pandas as pd
+from sqlalchemy import create_engine
+from pyod.models.iforest import IForest
+
+# Connecting to PostgreSQL
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 
-#to read data from PostgreSQL
+# Reading data from PostgreSQL
 data = pd.read_sql("SELECT * FROM system_performance", engine)
 print("Rows fetched from DB:", len(data))
 
-#selecting feature colns
+# Selecting feature columns
 features = data[[
     "cpu_usage_percent",
     "gpu_usage_percent",
@@ -25,20 +26,26 @@ features = data[[
     "network_received_kbps"
 ]]
 
-#creating PyOD model-Isolation Forest
-model = IForest(contamination=0.1, random_state=42) 
-#asssuming 10% of data may be anomaly
-#random state to make results reproducible
+# Creating PyOD model - Isolation Forest
+model = IForest(
+    contamination=0.1,
+    random_state=42
+)
 
-#training above used model 
-model.fit(features)
+# Converting features to NumPy array
+X_values = features.values
 
-#predicting anomalies
-data["anomaly"] = model.predict(features)
-#result-> 0- data is normal
-#         1- anomaly
+# Training the model
+model.fit(X_values)
 
-#viewing detected anomalies- prints only abnormal system states
+# Predicting anomalies
+data["anomaly"] = model.predict(X_values)
+
+# Result:
+# 0 = normal
+# 1 = anomaly
+
+# Viewing detected anomalies
 print("\nDetected Anomalies:")
 print(data[data["anomaly"] == 1])
 
