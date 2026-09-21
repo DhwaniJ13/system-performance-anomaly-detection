@@ -1,47 +1,40 @@
 # System Performance Anomaly Detection
 
-An end-to-end system performance monitoring and anomaly detection pipeline built with Python, PostgreSQL, PyOD, and Isolation Forest to identify unusual resource-usage patterns.
+> An end-to-end machine learning pipeline for monitoring system performance, storing telemetry data in PostgreSQL, and detecting unusual resource-usage patterns using Isolation Forest.
 
 ## Overview
 
-This project monitors system performance metrics, stores the collected data in PostgreSQL, and applies machine learning-based anomaly detection to identify unusual system behavior.
+System performance can fluctuate due to changes in CPU utilization, memory usage, disk activity, and network traffic.
 
-The pipeline combines system monitoring, database storage, data processing, and unsupervised machine learning into a single workflow.
+This project collects system performance metrics, stores the collected data in PostgreSQL, retrieves and processes the data using Python, and applies unsupervised anomaly detection to identify observations that differ from normal system behavior.
 
-## Problem Statement
+The project demonstrates an end-to-end data science workflow:
 
-System resources such as CPU, memory, disk activity, and network traffic can exhibit unusual patterns that may indicate performance issues or abnormal system behavior.
+**System Monitoring → Database Storage → Data Processing → Anomaly Detection → Results**
 
-Manually analyzing these metrics can be difficult when monitoring large numbers of observations.
+---
 
-This project addresses the problem by:
+## Key Results
 
-- Collecting system performance metrics
-- Persisting monitoring data in PostgreSQL
-- Processing the stored data using Python
-- Applying Isolation Forest for anomaly detection
-- Labeling observations as normal or anomalous
+| Metric | Result |
+|---|---:|
+| Records processed | 54 |
+| Normal observations | 48 |
+| Detected anomalies | 6 |
+| Anomaly rate | 11.1% |
 
-## Architecture
+> Results shown above are from the current local test dataset.
 
-```text
-System Metrics
-      │
-      ▼
-Python / psutil
-      │
-      ▼
-PostgreSQL
-      │
-      ▼
-Pandas Data Processing
-      │
-      ▼
-Isolation Forest
-      │
-      ▼
-Anomaly Classification
-      │
-      ├── Normal
-      │
-      └── Anomalous
+---
+
+## Project Architecture
+
+```mermaid
+flowchart LR
+    A[System Performance Metrics] --> B[Python + psutil]
+    B --> C[PostgreSQL]
+    C --> D[Pandas Data Processing]
+    D --> E[Feature Preparation]
+    E --> F[Isolation Forest]
+    F --> G[Anomaly Classification]
+    G --> H[Normal / Anomalous Records]
